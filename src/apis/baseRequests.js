@@ -45,7 +45,7 @@ export async function callService(uri, method, bodyParameters, hasToken) {
         if (hasToken) {
             authen_token = await AsyncStorage.getItem('key');
         }
-        let headers = !hasToken ? { 'Content-Type': 'application/json;charset=UTF-8' } : { 'Content-Type': 'application/json;charset=UTF-8', 'X-Auth-Token': `${authen_token}` }
+        let headers = !hasToken ? { 'Content-Type': 'application/json;charset=UTF-8' } : { 'Content-Type': 'application/json;charset=UTF-8', Authorization: `Bearer ${authen_token}` }
         let configAxios
         configAxios = {
             url,
@@ -84,7 +84,7 @@ const handleResponseSuccess = (response, resolve) => {
 const handleResponseFail = (error, reject) => {
     const status = error.response ? error.response.status : error.status
     switch (status) {
-        case responseStatus.TOKEN_EXPRIRED:
+        case responseStatus.TOKEN_EXPIRED:
         case responseStatus.NOT_CONNECT:
         case responseStatus.FILE_NOT_FOUND:
         case responseStatus.REQUEST_TIMEOUT:

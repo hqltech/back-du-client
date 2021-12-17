@@ -1,26 +1,14 @@
-import { combineReducers, createStore, applyMiddleware } from 'redux';
+import {applyMiddleware, combineReducers, createStore} from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import {
-    persistStore,
-    persistReducer
-} from 'redux-persist';
+import {persistReducer, persistStore} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as reducers from './index';
-import { baseRequests } from '../apis'
+import {baseRequests} from '../apis'
 
 const logger = ({ getState }) => {
     return next => action => {
-        // console.log('will dispatch', action)
-
-        // Call the next dispatch method in the middleware chain.
-        const returnValue = next(action)
-
-        // console.log('state after dispatch', getState())
-
-        // This will likely be the action itself, unless
-        // a middleware further in chain changed it.
-        return returnValue
+        return next(action)
     }
 }
 
@@ -39,8 +27,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const configureStore = () => {
-    const store = createStore(persistedReducer, applyMiddleware(baseRequests, thunkMiddleware, logger));
-    return store;
+    return createStore(persistedReducer, applyMiddleware(baseRequests, thunkMiddleware, logger));
 };
 export default configureStore;
-export let persistor = persistStore(configureStore());
+export let persist = persistStore(configureStore());
