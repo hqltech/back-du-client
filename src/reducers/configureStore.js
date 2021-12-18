@@ -4,7 +4,7 @@ import {persistReducer, persistStore} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as reducers from './index';
-import {baseRequests} from '../apis'
+import apiMiddleware from "../apis/baseRequests";
 
 const logger = ({ getState }) => {
     return next => action => {
@@ -27,7 +27,7 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const configureStore = () => {
-    return createStore(persistedReducer, applyMiddleware(baseRequests, thunkMiddleware, logger));
+    return createStore(persistedReducer, applyMiddleware(apiMiddleware, thunkMiddleware, logger));
 };
 export default configureStore;
 export let persist = persistStore(configureStore());

@@ -24,6 +24,7 @@ const apiMiddleware = ({ dispatch }) => next => action => {
             })
             return response
         }).catch((error) => {
+            console.log(`${action.type}_FAILED`)
             next({
                 type: `${action.type}_FAILED`,
                 payload: error,
@@ -41,11 +42,11 @@ export async function callService(uri, method, bodyParameters, hasToken) {
     // console.log(url);
     let url = `${environmentConfig.API_ENVIRONMENT_URL}${uri}`;
     try {
-        let authen_token
+        let authentication_token
         if (hasToken) {
-            authen_token = await AsyncStorage.getItem('key');
+            authentication_token = await AsyncStorage.getItem('key');
         }
-        let headers = !hasToken ? { 'Content-Type': 'application/json;charset=UTF-8' } : { 'Content-Type': 'application/json;charset=UTF-8', Authorization: `Bearer ${authen_token}` }
+        let headers = !hasToken ? { 'Content-Type': 'application/json;charset=UTF-8' } : { 'Content-Type': 'application/json;charset=UTF-8', Authorization: `Bearer ${authentication_token}` }
         let configAxios
         configAxios = {
             url,

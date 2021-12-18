@@ -1,18 +1,18 @@
 import * as defines from './defines'
 
 const initState = {
-    respones: null,
-    listBranches: null,
+    response: null,
+    isLoading: false
 }
 
 export default function loginReducer(state = initState, action) {
     switch (action.type) {
         case defines.LOGIN_ACTION:
-            return { ...state }
+            return { ...state, isLoading: true }
         case defines.LOGIN_COMPLETED:
-            return { ...state, respones: action.payload }
-        case defines.CALL_GET_BRANCHES_COMPLETED:
-            return { ...state, listBranches: action.payload }
+            return { ...state, response: action.payload, isLoading: false }
+        case defines.LOGIN_FAILED:
+            return { ...state, response: action.payload, isLoading: false }
         default:
             return state
     }
