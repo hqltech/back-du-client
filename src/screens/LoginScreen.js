@@ -13,10 +13,11 @@ import useToggle from "../utils/hooks/useToggle";
 i18n.fallbacks = true;
 
 const { StatusBarManager } = NativeModules;
-const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : Platform.OS === 'web' ? 0 : StatusBarManager.HEIGHT;
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 40 : Platform.OS === 'web' ? 0 : StatusBarManager.HEIGHT;
 const WIDTH_SCREEN = Dimensions.get('window').width
+export {STATUSBAR_HEIGHT}
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
 	const dispatch = useDispatch();
 
 	const [userData, setUserData] = useState({
@@ -29,10 +30,9 @@ const LoginScreen = () => {
 		isLoading: state.loginReducer.isLoading
 	}));
 
-	console.log('dssssssssss', isLoading)
-
 	const handleLogin = () => {
-		dispatch(loginAction(userData))
+		// dispatch(loginAction(userData))
+		navigation.navigate('AppRoot');
 	};
 
 	const [lock, setLock] = useToggle(false);
@@ -93,10 +93,9 @@ const LoginScreen = () => {
 			{/*<Text>{JSON.stringify(user)}</Text>*/}
 			{/*{isLoading?<ActivityIndicator size="large" color="#00ff00" />:null}*/}
 			<View style={styles.style_btn}>
-
 				<TouchableOpacity style={{width: '100%', justifyContent: 'center', alignItems: 'center'}} onPress={handleLogin}>
 					{
-						isLoading?<ActivityIndicator size="large" color="#00ff00" />:<Text>{i18n.t('login')}</Text>
+						isLoading?<ActivityIndicator size={'small'} color={'#253274'} />:<Text>{i18n.t('login')}</Text>
 					}
 				</TouchableOpacity>
 			</View>

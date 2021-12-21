@@ -27,6 +27,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/hqltech/back-du-client",
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": ["./assets/notification_sound.mp3"]
+        }
+      ]
+    ]
   }
 }
