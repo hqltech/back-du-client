@@ -2,7 +2,7 @@
   "name": "backdu-app",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "homepage": "http://hqltech.github.io/back-du",
+  "homepage": "http://hqltech.github.io/back-du-client",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
