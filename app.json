@@ -3,7 +3,7 @@
     "name": "backdu-app",
     "slug": "backdu-app",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -28,13 +28,24 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "androidNavigationBar": {
+      "visible": "immersive",
+      "barStyle": "light-content",
+      "backgroundColor": "#0b4a76"
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#0b4a76"
+    },
     "description": "",
     "githubUrl": "https://github.com/hqltech/back-du-client",
     "plugins": [
       [
         "expo-notifications",
         {
-          "sounds": ["./assets/notification_sound.mp3"]
+          "sounds": [
+            "./assets/notification_sound.mp3"
+          ]
         }
       ]
     ]

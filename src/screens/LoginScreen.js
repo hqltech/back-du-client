@@ -10,6 +10,7 @@ import images from "../assets/images";
 import colors from "../defines/colors";
 import { Feather } from '@expo/vector-icons';
 import useToggle from "../utils/hooks/useToggle";
+import {createAnonymous} from "../reducers/user/action";
 i18n.fallbacks = true;
 
 const { StatusBarManager } = NativeModules;
@@ -22,7 +23,8 @@ const LoginScreen = ({navigation}) => {
 
 	const [userData, setUserData] = useState({
 		Username: '',
-		Password: ''
+		Password: '',
+		coins: 1000
 	});
 
 	const {user, isLoading} = useSelector(state => ({
@@ -31,8 +33,16 @@ const LoginScreen = ({navigation}) => {
 	}));
 
 	const handleLogin = () => {
-		// dispatch(loginAction(userData))
-		navigation.navigate('AppRoot');
+		if(userData.Username === ''){
+			alert('Invalid username')
+		}
+		else if(userData.Password === ''){
+			alert('Invalid password')
+		} else {
+			console.log('userda', userData)
+			dispatch(createAnonymous(userData))
+			navigation.navigate('AppRoot');
+		}
 	};
 
 	const [lock, setLock] = useToggle(false);
@@ -62,12 +72,12 @@ const LoginScreen = ({navigation}) => {
 					<Text>{i18n.t('username')}</Text>
 
 					<TextInput style={styles.style_text_input} placeholder={i18n.t('placeholder_username')}
-							   onChangeText={(value)=>{
-								   setUserData(prevState => ({
-									   ...prevState,
-									   Username: value
-								   }))
-							   }}
+					   onChangeText={(value)=>{
+						   setUserData(prevState => ({
+							   ...prevState,
+							   Username: value
+						   }))
+					   }}
 					/>
 
 				</View>
@@ -75,12 +85,12 @@ const LoginScreen = ({navigation}) => {
 					<Text>{i18n.t('password')}</Text>
 					<View style={styles.style_view_row}>
 						<TextInput secureTextEntry={lock} style={styles.style_text_input} placeholder={i18n.t('placeholder_password')}
-								   onChangeText={(value)=>{
-									   setUserData(prevState => ({
-										   ...prevState,
-										   Password: value
-									   }))
-								   }}
+						   onChangeText={(value)=>{
+							   setUserData(prevState => ({
+								   ...prevState,
+								   Password: value
+							   }))
+						   }}
 						/>
 						<View style={{position: 'absolute', right: 10}}>
 							<TouchableOpacity onPress={setLock}>

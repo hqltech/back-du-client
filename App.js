@@ -7,6 +7,8 @@ import RootNavigation from "./src/navigations";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import * as Permission from 'expo-permissions'
+import {LogBox} from 'react-native';
+LogBox.ignoreLogs(['Warning: Async Storage has been extracted from react-native core']);
 import {
 	Montserrat_100Thin,
 	Montserrat_100Thin_Italic,

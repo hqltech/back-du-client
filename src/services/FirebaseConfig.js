@@ -49,12 +49,10 @@ const parse = snapshot => {
 };
 
 const on = callback => {
-	// return onValue(dbRef, (snapshot) => {callback(parse(snapshot))});
 	return onValue(query(dbRef, limitToLast(20)), (snapshot => callback(parse(snapshot))))
 };
 
 const append = message => {
-	// set(dbRef, message).then(e=>console.log('send', e)).catch(err=>console.log('err', err));
 	push(dbRef, message);
 };
 

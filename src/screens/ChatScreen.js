@@ -1,9 +1,9 @@
-import React, {useState, useCallback, useEffect, useRef, useLayoutEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {View, LogBox} from 'react-native'
 import Text from "../components/Text";
 import {GiftedChat} from 'react-native-gifted-chat';
 import {db, send, uid} from "../services/FirebaseConfig";
-import {limitToLast, onValue, query, ref, get, orderByChild, onChildAdded, onChildChanged, off} from "firebase/database";
+import {onValue, query, ref, off, limitToLast, orderByKey} from "firebase/database";
 import _ from "lodash";
 
 const ChatScreen = ({navigation, route}) => {
@@ -27,34 +27,19 @@ const ChatScreen = ({navigation, route}) => {
 				}
 				initMsg.push(obj)
 			}
-			// console.log(urAV)
 			index++
 		}
-		let compareMessages = [...messages]
 		const order = _.orderBy(initMsg, ['createdAt'],['desc'])
-		console.log('COMPARE MESSSSS', compareMessages)
-		if (compareMessages.length !== 0) {
-			const results = initMsg.filter(({ _id: id1 }) => !compareMessages.some(({ _id: id2 }) => id2 === id1));
-			console.log('resssssssssssssss', results)
-			// for(let m = 0; m < results.length; m++) {
-			// 	console.log('a', results[m].text)
-			// 	// sendPushNotification(results[m].text).then(r=>{}).catch(err=>console.log('Error Call Notification', err));
-			// }
-			// console.log('aaaaaaa', results)
-		}
 		setMessages(order);
 	};
 
 	useEffect(() => {
-		onValue(query(ref(db, `messages`)), snapshot => {
+		onValue(query(ref(db, `messages`), orderByKey()), snapshot => {
 			onDataChange(snapshot)
-			// console.log('CHANGEE  ', snapshot)
 		})
 
 		return () => {
-			off(query(ref(db, `messages`)), "value", snapshot => {
-				console.log('SNAPPPPP', snapshot)
-			})
+			off(query(ref(db, `messages`), orderByKey()), "value", snapshot => {})
 		};
 	}, [])
 
