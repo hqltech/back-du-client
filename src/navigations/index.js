@@ -30,7 +30,7 @@ const RootNavigation = () => {
     return (
         <NavigationContainer ref={navigationRef}>
             <Stack.Navigator>
-                <Stack.Screen name={'AuthNavigation'} component={AuthNavigation} options={{ headerShown: false }} />
+                {/*<Stack.Screen name={'AuthNavigation'} component={AuthNavigation} options={{ headerShown: false }} />*/}
                 <Stack.Screen name={'AppRoot'} component={AppRoot} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>

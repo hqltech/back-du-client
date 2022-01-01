@@ -21,9 +21,9 @@ const BET_ARR = [
 const DiceGameScreen = ({navigation}) => {
 
 	const [dice, setDice] = useState({
-		dice_1: 1,
-		dice_2: 1,
-		dice_3: 1,
+		dice_1: Math.floor(Math.random() * 6) + 1,
+		dice_2: Math.floor(Math.random() * 6) + 1,
+		dice_3: Math.floor(Math.random() * 6) + 1
 	});
 
 	let [currentCount, setCount] = useState(20);

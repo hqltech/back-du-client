@@ -4,3 +4,4 @@ export { default as  HomeScreen } from '../screens/HomeScreen';
 export { default as SettingScreen } from '../screens/SettingScreen';
 export { default as ChatScreen } from '../screens/ChatScreen';
 export { default as DiceGameScreen } from '../screens/DiceGameScreen';
+export { default as LotteryGameScreen } from '../screens/LotteryGameScreen';

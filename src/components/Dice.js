@@ -3,7 +3,7 @@ import Animated, {useSharedValue, withSpring, useAnimatedStyle, withTiming, with
 import images from "../assets/images";
 import {scaleSize} from "../utils/scale";
 
-const DiceComponent = ({number = 1}) => {
+const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
 	const [uri, setUri] = useState(images.dice_1);
 

@@ -2,15 +2,18 @@ import {
 	MainAppScreen,
 	// SettingScreen,
 	HomeScreen,
-	DiceGameScreen
-	// ChatScreen
+	DiceGameScreen,
+	LotteryGameScreen,
+	ChatScreen
 } from './index';
 
 const routers = {
 	// MainAppScreen: {name: 'MainAppScreen', component: MainAppScreen},
-	// ChatScreen: {name: 'ChatScreen', component: ChatScreen},
+
 	HomeScreen: {name: 'HomeScreen', component: HomeScreen},
 	DiceGameScreen: {name: 'DiceGameScreen', component: DiceGameScreen},
+	LotteryGameScreen: {name: 'LotteryGameScreen', component: LotteryGameScreen},
+	ChatScreen: {name: 'ChatScreen', component: ChatScreen},
 	// SettingScreen: {name: 'SettingScreen', component: SettingScreen},
 }
 

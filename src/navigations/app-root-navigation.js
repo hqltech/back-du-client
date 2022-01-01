@@ -8,7 +8,8 @@ const AppRoot = () => {
 		<Stack.Navigator
 			screenOptions={{
 				headerShown: false,
-			}}>
+			}}
+		>
 			{Object.keys(routers).map((component, index) => (
 				<Stack.Screen {...routers[component]} key={index.toString()} />
 			))}

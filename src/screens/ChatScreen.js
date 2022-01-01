@@ -15,6 +15,7 @@ const ChatScreen = ({navigation, route}) => {
 		const arrMsg = _.toArray(items.val());
 		let index = 0;
 		let initMsg = []
+		// console.log('a', arrMsg)
 		for (const property in items.val()) {
 			let urAV = {...arrMsg[index].user};
 			if(urAV.name?.current !== undefined) {
@@ -25,11 +26,13 @@ const ChatScreen = ({navigation, route}) => {
 					text: arrMsg[index].text,
 					user: urAV,
 				}
+				console.log('OBJ', obj)
 				initMsg.push(obj)
 			}
 			index++
 		}
 		const order = _.orderBy(initMsg, ['createdAt'],['desc'])
+		// console.log('ORR', order)
 		setMessages(order);
 	};
 
@@ -43,9 +46,11 @@ const ChatScreen = ({navigation, route}) => {
 		};
 	}, [])
 
+	// console.log('MESS', messages)
+
 	const user = () => {
 		return {
-			name: route.params?.name,
+			name: (Math.random() + 1).toString(36).substring(7),
 			_id: uid()
 		}
 	};
@@ -55,13 +60,16 @@ const ChatScreen = ({navigation, route}) => {
 	}, []);
 
 	return (
-		<View style={{flex: 1}}>
-			<Text>{'CHAT SCREEN'}</Text>
-			<GiftedChat
-				messages={messages}
-				onSend={messages => onSend(messages)}
-				user={user()}
-			/>
+		<View style={{flex: 1,}}>
+			<View style={{flex: 1, marginHorizontal: 40}}>
+				<GiftedChat
+					messages={messages}
+					onSend={messages => onSend(messages)}
+					user={user()}
+				/>
+			</View>
+
+
 		</View>
 	);
 };

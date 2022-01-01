@@ -20,6 +20,9 @@ const images = {
 	chip_2000: require('./images/chip_2000.png'),
 	chip_5000: require('./images/chip_5000.png'),
 	chip_10000: require('./images/chip_10000.png'),
+	banner_home_1: require('./images/banner_home_1.png'),
+	banner_home_2: require('./images/banner_home_2.png'),
+	banner_home_3: require('./images/banner_home_3.png'),
 	featured_game_bg: require('./images/featuredgame_bg.jpg'),
 	newsletter: require('./images/newsletter.jpg'),
 }

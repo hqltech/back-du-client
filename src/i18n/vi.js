@@ -12,5 +12,15 @@ const vi = {
 	total: 'Tổng',
 	welcome_user_d: 'Tên: ',
 	last_coin_d: 'Coins: ',
+	pick_date: 'Chọn ngày',
+	domain_mb: 'Miền Bắc',
+	domain_mn: 'Miền Nam',
+	domain_mt: 'Miền Trung',
+	pick_domain: 'Chọn đài',
+	pick_number: 'Chọn số',
+	total_money: 'Tổng tiền đánh',
+	number: 'Số',
+	luat_lo_2_so: 'Đánh 2 chữ số cuối trong lô 27 giải. Thắng gấp 99.4 lần, nếu số đó về N lần thì tính kết quả x N lần. Ví dụ: đánh lô 79 - 1 con 1k, Tổng thanh toán: 1k x 27 = 27k. Nếu trong lô có 2 chữ số cuối là 79 thì Tiền thắng: 1k x 99.4 = 99.4k, nếu có N lần 2 chữ số cuối là 79 thì Tiền thắng là: 1k x 99.4 x N',
+
 }
 export default vi
