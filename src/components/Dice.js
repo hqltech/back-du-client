@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Animated, {useSharedValue, withSpring, useAnimatedStyle, withTiming, withSequence} from "react-native-reanimated";
 import images from "../assets/images";
-import {scaleSize} from "../utils/scale";
+import {scaleHeight, scaleSize} from "../utils/scale";
 
 const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
@@ -46,8 +46,8 @@ const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
 	return (
 		<Animated.Image style={[{
-			width: 50,
-			height: 40,
+			width: scaleSize(100),
+			height: scaleHeight(100),
 			margin: scaleSize(16),
 			resizeMode: 'contain'
 		}]} source={uri}/>

@@ -20,6 +20,7 @@ const LotteryGameScreen = () => {
 		{id: 2, name: i18n.t('domain_mn'), value: 'mn'},
 		{id: 3, name: i18n.t('domain_mt'), value: 'mt'},
 	]
+
 	const [selectDomain, setSelectDomain] = useState('mb');
 	const [selectType, setSelectType] = useState(1);
 
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
 	},
 	style_view_main: {
 		flex: 1,
-		marginHorizontal: 40
+		marginHorizontal: 40,
 	},
 	style_btn: {
 		width: scaleSize(180),

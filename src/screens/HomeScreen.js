@@ -5,7 +5,7 @@ import {
 	TouchableOpacity,
 	ImageBackground, StatusBar,
 	ScrollView,
-	Image, Platform, Dimensions, Animated, PanResponder
+	Image, Platform, Dimensions, Animated, PanResponder, ImageBackgroundComponent
 } from "react-native";
 import Text from "../components/Text";
 import images from "../assets/images";
@@ -17,9 +17,14 @@ import Dice from "../components/Dice";
 import useToggle from "@rooks/use-toggle";
 import {useDispatch, useSelector} from "react-redux";
 import {minusCoins, plusCoins} from "../reducers/user/action";
+import ButtonImage from "../components/ButtonImage";
+import DialogLogin from "../components/DialogLogin";
+import AnimateDice from "../components/AnimateDice";
+import AnimatedText from "react-native-web/dist/vendor/react-native/Animated/components/AnimatedText";
+import AnimateText from "../components/AnimateText";
 
-const DIALOG_WIDTH = 820;
-const DIALOG_HEIGHT = 550;
+const DIALOG_WIDTH = 1200;
+const DIALOG_HEIGHT = 700;
 
 const CIRCLE_RADIUS = 80
 
@@ -44,7 +49,7 @@ const HomeScreen = ({navigation}) => {
 		dice_3: Math.floor(Math.random() * 6) + 1
 	});
 
-	let [currentCount, setCount] = useState(50);
+	let [currentCount, setCount] = useState(4);
 
 	const timer = () => setCount(currentCount - 1);
 
@@ -88,15 +93,27 @@ const HomeScreen = ({navigation}) => {
 				dice_2: dice_2,
 				dice_3: dice_3,
 			}))
-			if(tx(total) === 'Tài') plusCoin(bet.t*1.9)
-			if(tx(total) === 'Xỉu') plusCoin(bet.x*1.9)
+			if(tx(total) === 'Tài') {
+				plusCoin(bet.t*1.9)
+				setWinResult(prevState => ({
+					...prevState,
+					t: winResult.t + 1
+				}))
+			}
+			if(tx(total) === 'Xỉu') {
+				plusCoin(bet.x*1.9)
+				setWinResult(prevState => ({
+					...prevState,
+					x: winResult.x + 1
+				}))
+			}
 			setBet(prevState => ({
 				...prevState,
 				t: 0,
 				x: 0
 			}))
 			setTimeout(
-				() => setCount(currentCount+=50),
+				() => setCount(currentCount+=4),
 				11000
 			);
 		}
@@ -157,18 +174,30 @@ const HomeScreen = ({navigation}) => {
 
 	const resultTX = useMemo(() => tx(dice.dice_1 + dice.dice_2 + dice.dice_3), [dice.dice_1 + dice.dice_2 + dice.dice_3]);
 
+	const [showDialogLogin, setShowDialogLogin] = useToggle(false)
+
+	function addZeroNumber (number) {
+		return number - 10 < 0 ? `0${number}`: number
+	}
+
+	const [winResult, setWinResult] = useState({t: 0, x: 0})
+
 	return (
 		<View style={styles.container}>
 			<ImageBackground source={images.featured_game_bg} style={styles.style_background}  resizeMode={'cover'}>
+				<View style={styles.container}>
 				<View style={styles.style_header_bar}>
-
+					<ButtonImage onPress={setShowDialogLogin} source={images.login_btn}/>
+					<ButtonImage source={images.register_btn}/>
 				</View>
 				<View style={styles.view_main}>
-					<Animated.ScrollView pagingEnabled style={styles.style_slider_banner} horizontal showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-						{bannerSlider.map((item)=>(
-							<TouchAbleBanner key={item.id} source={item.path}/>
-						))}
-					</Animated.ScrollView>
+					<View>
+						<Animated.ScrollView pagingEnabled style={styles.style_slider_banner} horizontal showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+							{bannerSlider.map((item)=>(
+								<TouchAbleBanner key={item.id} source={item.path}/>
+							))}
+						</Animated.ScrollView>
+					</View>
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 						<View style={{alignSelf: 'center'}}>
 							<ButtonGame onPress={setShowDialogDice} key={'1'} source={images.dice_game}/>
@@ -184,52 +213,50 @@ const HomeScreen = ({navigation}) => {
 					<Animated.View style={[styles.drag_view,{
 						transform: [{ translateX: pan.x }, { translateY: pan.y }]
 					}]} {...panResponder.panHandlers}>
+						<ImageBackground style={{width: '100%', height: '100%', flex: 1, resizeMode: 'contain'}} source={images.tx_table_bg}>
 						<View style={styles.style_view_dialog_dice_header}>
-							<View>
-								<TouchableOpacity>
-									<Ionicons size={24} name={'ios-chatbox-outline'}/>
-								</TouchableOpacity>
-							</View>
-							<View style={styles.style_view_row}>
-								<Text>{user.Username}</Text>
-								<Text style={{color: 'red'}}> {'Coin:'} {user.coins}</Text>
-							</View>
-							<View>
-								<TouchableOpacity onPress={setShowDialogDice}>
-									<Ionicons size={24} name={'ios-close'}/>
-								</TouchableOpacity>
-							</View>
+							<ButtonImage source={images.chat_table}/>
+							{/*<View style={styles.style_view_row}>*/}
+							{/*	<Text>{user.Username}</Text>*/}
+							{/*	<Text style={{color: 'red'}}> {'Coin:'} {user.coins}</Text>*/}
+							{/*</View>*/}
+							{/*<Image style={{resizeMode: 'contain', width: 100, height: 50}} source={images.dragon_1}/>*/}
+							<ButtonImage onPress={setShowDialogDice} source={images.close_table}/>
 						</View>
 						<View style={styles.style_main_dialog_dice}>
 							<View style={styles.style_view_bet}>
-								<Text style={styles.style_text_dice}>{'Tài'}</Text>
-								<Text style={styles.style_text_bet}>{bet.t}</Text>
-								<View style={{marginTop: scaleSize(16)}}>
-									<TouchableOpacity onPress={()=>minusCoin(1)}>
-										<Ionicons color={'#fdcb6e'} name={'ios-hand-left'} size={42}/>
-									</TouchableOpacity>
+								{/*<Text style={styles.style_text_dice}>{'Tài'}</Text>*/}
+								<View style={{borderWidth: 1, alignItems: 'center'}}>
+									<AnimateText win={winResult.t} source={images.tai}/>
+									<Text style={styles.style_text_bet}>{bet.t}</Text>
 								</View>
+								{/*<View style={{marginTop: scaleSize(16)}}>*/}
+								{/*	<TouchableOpacity onPress={()=>minusCoin(1)}>*/}
+								{/*		<Ionicons color={'#fdcb6e'} name={'ios-hand-left'} size={42}/>*/}
+								{/*	</TouchableOpacity>*/}
+								{/*</View>*/}
 							</View>
 							<View style={{alignItems: 'center'}}>
-								<View style={styles.style_circle_dice_count_down}>
+								<AnimateDice>
 									{currentCount<=0&&(
-										<View style={{alignItems: 'center'}}>
-											<View style={styles.style_view_row}>
-												<Text style={{fontSize: 18}}>{resultTotal}</Text>
-												<Text style={{fontSize: 20, color: 'red'}}>{resultTX}</Text>
-											</View>
-
+										<View style={{position: 'absolute', alignItems: 'center', alignSelf: 'center', top: 15}}>
+											{/*<View style={styles.style_view_row}>*/}
+											{/*	<Text style={{fontSize: 18}}>{resultTotal}</Text>*/}
+											{/*	<Text style={{fontSize: 20, color: 'red'}}>{resultTX}</Text>*/}
+											{/*</View>*/}
 											<Dice key={'dice1'} number={dice.dice_1}/>
-											<View style={styles.style_view_row}>
+											<View style={{flexDirection: 'row'}}>
 												<Dice key={'dice2'} number={dice.dice_2}/>
 												<Dice key={'dice3'} number={dice.dice_3}/>
 											</View>
 										</View>
 									)}
 									{currentCount > 0 &&(
-										<Text style={styles.style_text_count_dice}>{currentCount}</Text>
+										<View style={{position: 'absolute', left: 50, top: 50}}>
+											<Text style={[styles.style_text_count_dice, currentCount <= 5 && styles.style_text_last]}>{addZeroNumber(currentCount)}</Text>
+										</View>
 									)}
-								</View>
+								</AnimateDice>
 								<View style={styles.style_view_row}>
 									{BET_ARR.map((item)=>(
 										<View style={[styles.current_bet, currentBet===item.value?styles.active_current_bet:null]} key={item.value}>
@@ -244,20 +271,23 @@ const HomeScreen = ({navigation}) => {
 							</View>
 
 							<View style={styles.style_view_bet}>
-								<Text style={styles.style_text_dice}>{'Xỉu'}</Text>
-								<Text style={styles.style_text_bet}>{bet.x}</Text>
-								<View style={{marginTop: scaleSize(16)}}>
-									<TouchableOpacity onPress={()=>minusCoin(2)}>
-										<Ionicons color={'#6c5ce7'} name={'ios-hand-right'} size={42}/>
-									</TouchableOpacity>
-								</View>
+								<AnimateText win={winResult.x} source={images.xiu}/>
+								{/*<Text style={styles.style_text_dice}>{'Xỉu'}</Text>*/}
+								{/*<Text style={styles.style_text_bet}>{bet.x}</Text>*/}
+								{/*<View style={{marginTop: scaleSize(16)}}>*/}
+								{/*	<TouchableOpacity onPress={()=>minusCoin(2)}>*/}
+								{/*		<Ionicons color={'#6c5ce7'} name={'ios-hand-right'} size={42}/>*/}
+								{/*	</TouchableOpacity>*/}
+								{/*</View>*/}
 							</View>
 						</View>
+						</ImageBackground>
 					</Animated.View>
 				)}
-
+				</View>
 			</ImageBackground>
 			<StatusBar translucent backgroundColor="transparent" hidden/>
+			<DialogLogin onCloseDialog={setShowDialogLogin} show={showDialogLogin}/>
 		</View>
 	);
 };
@@ -265,10 +295,6 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-
 	},
 	style_background: {
 		width: '100%',
@@ -284,7 +310,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: Platform.OS === 'ios'? 40 : 0
 	},
 	style_header_bar: {
-
+		flexDirection: 'row',
+		justifyContent: 'center'
 	},
 	style_slider_banner: {
 		width: scaleSize(310),
@@ -300,18 +327,6 @@ const styles = StyleSheet.create({
 		left: WINDOW_WIDTH / 2 - scaleSize(DIALOG_WIDTH) / 2,
 		width: scaleSize(DIALOG_WIDTH),
 		height: scaleHeight(DIALOG_HEIGHT),
-		// alignSelf: 'center',
-		backgroundColor: 'white',
-		borderRadius: 20,
-		padding: scaleSize(16),
-		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 12,
-		},
-		shadowOpacity: 0.58,
-		shadowRadius: 16.00,
-		elevation: 24,
 	},
 	style_view_dialog_dice_header: {
 		flexDirection: 'row',
@@ -320,8 +335,8 @@ const styles = StyleSheet.create({
 	style_main_dialog_dice: {
 		flexDirection: 'row',
 		flex: 1,
-		justifyContent: 'space-between',
-
+		justifyContent: 'space-evenly',
+		paddingHorizontal: scaleSize(40)
 	},
 	style_text_dice: {
 		fontFamily: 'Montserrat_900Black',
@@ -330,12 +345,16 @@ const styles = StyleSheet.create({
 		color: '#EA2027',
 	},
 	style_view_bet: {
-		alignItems: 'center'
+		alignItems: 'center',
+		borderWidth: 1,
+		alignSelf: 'baseline'
+		// width: scaleSize(300)
 	},
 	style_text_bet: {
 		fontFamily: 'Montserrat_700Bold',
-		color: '#ff5252',
-		marginVertical: scaleSize(16)
+		color: '#f1c40f',
+		marginVertical: -scaleSize(30),
+		fontSize: 16
 	},
 	style_circle_dice_count_down: {
 		backgroundColor: '#1abc9c',
@@ -348,7 +367,10 @@ const styles = StyleSheet.create({
 	style_text_count_dice: {
 		fontFamily: 'Montserrat_900Black',
 		fontSize: 60,
-		color: 'white'
+		color: 'white',
+	},
+	style_text_last: {
+		color: 'red'
 	},
 	current_bet: {
 		justifyContent: 'center',

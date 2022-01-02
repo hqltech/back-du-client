@@ -23,7 +23,23 @@ const images = {
 	banner_home_1: require('./images/banner_home_1.png'),
 	banner_home_2: require('./images/banner_home_2.png'),
 	banner_home_3: require('./images/banner_home_3.png'),
+	login_btn: require('./images/login_btn.png'),
+	register_btn: require('./images/register_btn.png'),
 	featured_game_bg: require('./images/featuredgame_bg.jpg'),
 	newsletter: require('./images/newsletter.jpg'),
+	dialog_login_bg: require('./images/dialog_login_bg.png'),
+	tx_table_bg: require('./images/tx_table_bg.png'),
+	chat_table: require('./images/chat_table.png'),
+	dishes_table: require('./images/dishes_table.png'),
+	close_table: require('./images/close_table.png'),
+	dragon_1: require('./images/dragon_1.png'),
+	tai: require('./images/tai.png'),
+	xiu: require('./images/xiu.png'),
+	animate_dice_1: require('./images/animate_dice_1.png'),
+	animate_dice_2: require('./images/animate_dice_2.png'),
+	dice_a_1: require('./images/dice_a_1.png'),
+	dice_a_2: require('./images/dice_a_2.png'),
+	dice_a_3: require('./images/dice_a_3.png'),
+
 }
 export default images
