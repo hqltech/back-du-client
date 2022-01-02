@@ -9,3 +9,6 @@ export const scaleSize = (size) => size * (
 		WINDOW_HEIGHT / guidelineBaseHeight));
 export const scaleHeight = (size) =>
 	(WINDOW_HEIGHT / guidelineBaseHeight) * size;
+
+export {WINDOW_WIDTH}
+export {WINDOW_HEIGHT}

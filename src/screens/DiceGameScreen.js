@@ -80,10 +80,7 @@ const DiceGameScreen = ({navigation}) => {
 
 	const [currentBet, setCurrentBet] = useState(100);
 
-	const [bet, setBet] = useState({
-		t: 0,
-		x: 0
-	})
+	const [bet, setBet] = useState({t: 0, x: 0})
 
 	function minusCoin (type) {
 		if(user.coins < currentBet){
@@ -101,9 +98,9 @@ const DiceGameScreen = ({navigation}) => {
 	return (
 		<View style={styles.container}>
 			{/*<ImageBackground style={styles.container} resizeMode={'cover'} source={images.newsletter}>*/}
-				<View style={{flexDirection: 'row', alignItems: 'center'}}>
+				<View style={{flexDirection: 'row', alignItems: 'center', marginStart: 40}}>
 					<TouchableOpacity onPress={()=>navigation.goBack()}>
-						<FontAwesome size={24} name={'close'}/>
+						<FontAwesome size={32} name={'close'}/>
 					</TouchableOpacity>
 					<Text style={styles.style_text_info}>{i18n.t('welcome_user_d')}{user?.Username}</Text>
 					<Text style={styles.style_text_info}>{i18n.t('last_coin_d')}{user?.coins}</Text>

@@ -11,10 +11,10 @@ const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
 	useEffect(()=>{
 		setUri(change(number))
-		rotateValue.value = withSequence(
-			withTiming(rotateValue.value+90, {duration: 600}),
-			withSpring(rotateValue.value+270)
-		);
+		// rotateValue.value = withSequence(
+		// 	withTiming(rotateValue.value+90, {duration: 600}),
+		// 	withSpring(rotateValue.value+270)
+		// );
 	},[number]);
 
 	function change (number) {
@@ -46,10 +46,11 @@ const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
 	return (
 		<Animated.Image style={[{
-			width: 80,
-			height: 90,
+			width: 50,
+			height: 40,
 			margin: scaleSize(16),
-		}, animateStyle]} source={uri}/>
+			resizeMode: 'contain'
+		}]} source={uri}/>
 	);
 };
 
