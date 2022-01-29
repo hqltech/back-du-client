@@ -10,3 +10,8 @@ export const loginAction = bodyParameters => async dispatch => {
         }
     })
 }
+export const cleanLoginState = none => async dispatch => {
+    dispatch({
+        type: defines.CLEAN_LOGIN_STATE,
+    })
+}

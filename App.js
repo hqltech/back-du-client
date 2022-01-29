@@ -6,7 +6,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import RootNavigation from "./src/navigations";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import * as Permission from 'expo-permissions'
+import FlashMessage from "react-native-flash-message";
 import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Warning: Async Storage has been extracted from react-native core']);
 import {
@@ -132,6 +132,7 @@ export default function App() {
 			<PersistGate onBeforeLift={onBeforeLift} persistor={persist}>
 				<View style={styles.container}>
 					<RootNavigation/>
+					<FlashMessage position={'top'} />
 				</View>
 			</PersistGate>
 		</Provider>

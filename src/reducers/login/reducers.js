@@ -13,6 +13,8 @@ export default function loginReducer(state = initState, action) {
             return { ...state, response: action.payload, isLoading: false }
         case defines.LOGIN_FAILED:
             return { ...state, response: action.payload, isLoading: false }
+        case defines.CLEAN_LOGIN_STATE:
+            return initState
         default:
             return state
     }

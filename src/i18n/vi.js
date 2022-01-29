@@ -23,6 +23,7 @@ const vi = {
 	luat_lo_2_so: 'Đánh 2 chữ số cuối trong lô 27 giải. Thắng gấp 99.4 lần, nếu số đó về N lần thì tính kết quả x N lần. Ví dụ: đánh lô 79 - 1 con 1k, Tổng thanh toán: 1k x 27 = 27k. Nếu trong lô có 2 chữ số cuối là 79 thì Tiền thắng: 1k x 99.4 = 99.4k, nếu có N lần 2 chữ số cuối là 79 thì Tiền thắng là: 1k x 99.4 x N',
 	min_bet: 'Cược tối thiểu',
 	money_win_one: 'Tiền thắng 1 con',
-	confirm: 'Đồng ý'
+	confirm: 'Đồng ý',
+	msg_user_not_login: 'Vui lòng đăng nhập!'
 }
 export default vi

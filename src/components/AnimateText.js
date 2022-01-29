@@ -3,13 +3,14 @@ import {View, Image, StyleSheet} from 'react-native';
 import Animated, {useSharedValue, useAnimatedStyle, withRepeat, withTiming, useCode} from "react-native-reanimated";
 import {scaleSize} from "../utils/scale";
 
-const AnimateText = ({source, win = 0}) => {
+const AnimateText = ({source, win}) => {
 
 	const opacityValue = useSharedValue(1)
 	const isFirst = useRef(0);
 
 	useCode(()=>{
 		if(isFirst.current !== 0) {
+			console.log('aaaaaaaaaaaaaaaaa')
 			opacityValue.value = withRepeat(
 				withTiming(0.3, {duration: 200}, (finished, currentValue) => {
 
@@ -21,6 +22,7 @@ const AnimateText = ({source, win = 0}) => {
 		}
 		isFirst.current = 1
 	},[win])
+
 	const animateStyle = useAnimatedStyle(()=>{
 		return{
 			opacity: opacityValue.value

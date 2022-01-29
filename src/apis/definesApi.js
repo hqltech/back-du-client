@@ -1,6 +1,6 @@
 export default {
     login: {
         id: 'authByPassword',
-        uri: 'Users/Authorize',
+        uri: 'v1/auth/login',
     },
 }
