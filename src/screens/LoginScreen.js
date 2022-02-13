@@ -39,7 +39,6 @@ const LoginScreen = ({navigation}) => {
 		else if(userData.Password === ''){
 			alert('Invalid password')
 		} else {
-			console.log('userda', userData)
 			dispatch(createAnonymous(userData))
 			navigation.navigate('AppRoot');
 		}

@@ -40,6 +40,9 @@ const images = {
 	dice_a_1: require('./images/dice_a_1.png'),
 	dice_a_2: require('./images/dice_a_2.png'),
 	dice_a_3: require('./images/dice_a_3.png'),
+	bg_animated_dice: require('./images/bg_animated_dice.png'),
+	btn_soi_cau: require('./images/btn_soi_cau.png'),
+	bg_result_static: require('./images/bg_result_static.png'),
 
 }
 export default images

@@ -18,16 +18,21 @@ import {Ionicons} from "@expo/vector-icons";
 import AnimateDice from "../components/AnimateDice";
 import Dice from "../components/Dice";
 import io from "socket.io-client";
-import {plusCoins} from "../reducers/user/action";
 import {useSelector} from "react-redux";
 import {showMessage} from "react-native-flash-message";
-import PopupChat from "../components/PopupChat";
 import {environmentConfig} from "../apis";
+import ResultDicePopup from "../components/ResultDicePopup";
+import {useToggle} from "rooks";
+import PopupChat from "../components/PopupChat";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const DIALOG_WIDTH = 1500;
-const DIALOG_HEIGHT = 700;
+const DIALOG_WIDTH = 1000;
+const DIALOG_HEIGHT = 600;
 
 const CIRCLE_RADIUS = 80
+
+export {DIALOG_WIDTH}
+export {DIALOG_HEIGHT}
 
 const BET_ARR = [
 	{path: images.chip_100, value: 100},
@@ -37,7 +42,7 @@ const BET_ARR = [
 	{path: images.chip_2000, value: 2000},
 	{path: images.chip_5000, value: 5000},
 ]
-
+const socket = io(environmentConfig.END_POINT_SOCKET, {transports: ['websocket']});
 const DiceGamePopup = () => {
 
 	const [dice, setDice] = useState({
@@ -92,12 +97,19 @@ const DiceGamePopup = () => {
 		socket.emit('openDicePopup', ()=>{
 
 		})
-	},[])
+	},[]);
 
+	const [countTai, setCountTai] = useState(0);
+	const [countXiu, setCountXiu] = useState(0);
+	const [diceResult, setDiceResult] = useState()
+	const [messages, setMessages] = useState([]);
 
 	useEffect(()=>{
-		const socket = io(environmentConfig.END_POINT_SOCKET, {transports: ['websocket']});
+
 		// socket.connect();
+		socket.on('messages', (msg)=>{
+			setMessages(msg)
+		})
 
 		socket.on('connect', () => {
 			console.log(socket.id);
@@ -112,6 +124,15 @@ const DiceGamePopup = () => {
 
 		socket.on("countDownDiceServer", data => {
 			setCurrentCount(data)
+		});
+
+		socket.on("arrResultDice", data => {
+			setDiceResult(data)
+		});
+
+		socket.on("countTaiXiu", data => {
+			setCountTai(data.t)
+			setCountXiu(data.x)
 		});
 
 		socket.on('betDiceT', data=>{
@@ -129,26 +150,43 @@ const DiceGamePopup = () => {
 				dice_2: data.dices.dice_2,
 				dice_3: data.dices.dice_3,
 			}))
-			// console.log('Usẻr', user)
-			// let userUpdate = {...user}
-			// console.log('<-'+userUpdate.coins)
 			if(total(data.dices.dice_1,data.dices.dice_2, data.dices.dice_3) - 10 > 0) {
-				// userUpdate.coins += betT
-				// console.log('->'+userUpdate.coins)
-				// dispatch(plusCoins(userUpdate));
-				// setWinResult(prevState => ({...prevState, t: winResult.t+1}))
+				setTimeout(
+					() => {
+						setCountTai(data.countTaiXiu.t);
+						setBetT((betT)=>{
+							console.log('eb', betT)
+							if(betT > 0) {
+								AsyncStorage.getItem('key').then(token=>{
+									socket.emit('user_update_coin', {token: token, coin: betT * 1.7, type: 'PLUS'});
+								})
+							}
+							return 0
+						});
+						setBetX(0)
+					},
+					3000
+				);
 			}else{
-				// userUpdate.coins += betX
-				// console.log('->'+userUpdate.coins)
-				// dispatch(plusCoins(userUpdate));
-				// setWinResult(prevState => ({...prevState, x: winResult.x+1}))
+				setTimeout(
+					() => {
+						setCountXiu(data.countTaiXiu.x);
+						setBetX((betX)=>{
+							if(betX > 0) {
+								AsyncStorage.getItem('key').then(token=>{
+									socket.emit('user_update_coin', {token: token, coin: betX * 1.7, type: 'PLUS'});
+								})
+							}
+							return 0
+						})
+						setBetT(0)
+					},
+					3000
+				);
 			}
-			// setBetT(0)
-			// setBetX(0)
+			setDiceResult(data.arrResultDice)
 		});
-
 		socket.on("timeOpen", data => {
-			// console.log('timeopen', data)
 			setOpenTimer(data)
 		})
 		return () => {
@@ -157,14 +195,9 @@ const DiceGamePopup = () => {
 		}
 	},[])
 
-	function plusCoin (coin) {
-		let userUpdate = {...user}
-		console.log('COON', coin)
-		userUpdate.coins += coin
-		dispatch(plusCoins(userUpdate));
-	}
-
-	function minusCoin (type) {
+	async function minusCoin (type) {
+		const token = await AsyncStorage.getItem('key')
+		// console.log('token', token)
 		if(user.total_gold < currentBet){
 			showMessage({
 				message: 'BC không đủ để cược!',
@@ -173,17 +206,15 @@ const DiceGamePopup = () => {
 		}
 		else {
 			if(currentCount > 5) {
-				const socket = io(environmentConfig.END_POINT_SOCKET, {transports: ['websocket']});
-				// let userUpdate = {...user};
-				// userUpdate.coins -= currentBet;
-				// dispatch(minusCoins(userUpdate));
 				if(type === 1) {
 					setBetT(betT + currentBet)
 					socket.emit('betDiceT', currentBet)
+					socket.emit('user_update_coin', {token: token, coin: currentBet, type: 'MINUS'});
 				}
 				if(type === 2){
 					setBetX(betX + currentBet)
 					socket.emit('betDiceX', currentBet)
+					socket.emit('user_update_coin', {token: token, coin: currentBet, type: 'MINUS'});
 				}
 			} else {
 				alert('Hết thời gian cược')
@@ -197,77 +228,78 @@ const DiceGamePopup = () => {
 		return number - 10 < 0 ? `0${number}`: number
 	}
 
+	const [isResultDicePopup, setIsResultDicePopup] = useToggle(false);
+
+	const [showChat, setShowChat] = useToggle(false);
+
 	return (
-		<Animated.View style={[styles.drag_view]} >
-			<PopupChat/>
-			<Animated.View style={[styles.drag_view,{
-				transform: [{ translateX: pan.x }, { translateY: pan.y }]
-			}]}  {...panResponder.panHandlers}>
-				<ImageBackground style={{width: scaleSize(1000), height: scaleHeight(600)}} source={images.tx_table_bg}>
-				<View style={styles.style_view_dialog_dice_header}>
-					{/*<ButtonImage onPress={setShowChat} source={images.chat_table}/>*/}
-					<View style={[styles.style_view_row, {marginTop: scaleSize(60)}]}>
-						{/*<Text>{JSON.stringify(resultsDice)}</Text>*/}
-					</View>
-					{/*<Image style={{resizeMode: 'contain', width: 100, height: 50}} source={images.dragon_1}/>*/}
-					{/*<ButtonImage onPress={setShowDialogDice} source={images.close_table}/>*/}
-				</View>
+		<Animated.View style={[styles.drag_view,{
+			transform: [{ translateX: pan.x }, { translateY: pan.y }]
+		}]}  {...panResponder.panHandlers}>
+			<ImageBackground style={styles.style_image_bg} source={images.tx_table_bg}>
+				<ButtonImage style={styles.style_chat_btn} onPress={setShowChat} source={images.chat_table}/>
 				<View style={styles.style_main_dialog_dice}>
-					<View style={styles.style_view_bet}>
-						<AnimateText source={images.tai}/>
-						<Text style={styles.style_text_bet}>{serverBet.t}</Text>
-						<Text style={styles.style_text_bet_user}>{betT}</Text>
-						<View style={{marginTop: scaleSize(16)}}>
-							<TouchableOpacity onPress={()=>minusCoin(1)}>
-								<Ionicons color={'#fdcb6e'} name={'ios-hand-left'} size={42}/>
-							</TouchableOpacity>
-						</View>
-					</View>
-					<View style={{alignItems: 'center'}}>
-						<AnimateDice>
-							{currentCount===0&&(
-								<View style={{position: 'absolute', alignItems: 'center', alignSelf: 'center', top: 15}}>
-									<View style={styles.style_circle_result}>
-										<Text style={{fontSize: 16, color: 'white', fontWeight: 'bold'}}>{resultTotal}</Text>
-									</View>
-									<Dice key={'dice1'} number={dice.dice_1}/>
-									<View style={{flexDirection: 'row'}}>
-										<Dice key={'dice2'} number={dice.dice_2}/>
-										<Dice key={'dice3'} number={dice.dice_3}/>
-									</View>
-									<Text>{openTimer}</Text>
-								</View>
-							)}
-							{currentCount > 0 &&(
-								<View style={{position: 'absolute', left: 45, top: 25}}>
-									<Text style={[styles.style_text_count_dice, currentCount <= 5 && styles.style_text_last]}>{addZeroNumber(currentCount)}</Text>
-								</View>
-							)}
-						</AnimateDice>
-						<View style={[styles.style_view_row]}>
-							{BET_ARR.map((item)=>(
-								<View style={[styles.current_bet, currentBet===item.value?styles.active_current_bet:null]} key={item.value}>
-									<TouchableOpacity onPress={()=>{setCurrentBet(item.value)}}
-													  style={{width: 22, height: 22, justifyContent: 'center', alignItems: 'center'}}>
-										<Image style={{width: 22, height: 22}} source={item.path} resizeMode={'stretch'}/>
-									</TouchableOpacity>
-								</View>
-							))}
-						</View>
-					</View>
-					<View style={styles.style_view_bet}>
-						<AnimateText source={images.xiu}/>
-						<Text style={styles.style_text_bet}>{serverBet.x}</Text>
-						<Text style={styles.style_text_bet_user}>{betX}</Text>
-						<View style={{marginTop: scaleSize(16)}}>
-							<TouchableOpacity onPress={()=>minusCoin(2)}>
-								<Ionicons color={'#3498db'} name={'ios-hand-right'} size={42}/>
-							</TouchableOpacity>
-						</View>
+				<View style={styles.style_view_bet}>
+					<AnimateText win={countTai} source={images.tai}/>
+					<Text style={styles.style_text_bet}>{serverBet.t}</Text>
+					<Text style={styles.style_text_bet_user}>{betT}</Text>
+					<View style={{marginTop: scaleSize(16)}}>
+						<TouchableOpacity onPress={()=>minusCoin(1)}>
+							<Ionicons color={'#fdcb6e'} name={'ios-hand-left'} size={42}/>
+						</TouchableOpacity>
 					</View>
 				</View>
+				<View style={{alignItems: 'center'}}>
+					<AnimateDice>
+						{currentCount===0&&(
+							<View style={{position: 'absolute', alignItems: 'center', alignSelf: 'center', top: 15}}>
+								<View style={styles.style_circle_result}>
+									<Text style={{fontSize: 16, color: 'white', fontWeight: 'bold'}}>{resultTotal}</Text>
+								</View>
+								<Dice key={'dice1'} number={dice.dice_1}/>
+								<View style={{flexDirection: 'row'}}>
+									<Dice key={'dice2'} number={dice.dice_2}/>
+									<Dice key={'dice3'} number={dice.dice_3}/>
+								</View>
+								<Text>{openTimer}</Text>
+							</View>
+						)}
+						{currentCount > 0 &&(
+							<View style={{position: 'absolute', left: 45, top: 25}}>
+								<Text style={[styles.style_text_count_dice, currentCount <= 5 && styles.style_text_last]}>{addZeroNumber(currentCount)}</Text>
+							</View>
+						)}
+					</AnimateDice>
+					<View style={[styles.style_view_row]}>
+						{BET_ARR.map((item)=>(
+							<View style={[styles.current_bet, currentBet===item.value?styles.active_current_bet:null]} key={item.value}>
+								<TouchableOpacity onPress={()=>{setCurrentBet(item.value)}}
+												  style={{width: 22, height: 22, justifyContent: 'center', alignItems: 'center'}}>
+									<Image style={{width: 22, height: 22}} source={item.path} resizeMode={'stretch'}/>
+								</TouchableOpacity>
+							</View>
+						))}
+						<ButtonImage style={styles.style_btn_img} source={images.btn_soi_cau} onPress={setIsResultDicePopup}/>
+					</View>
+				</View>
+				<View style={styles.style_view_bet}>
+					<AnimateText win={countXiu} source={images.xiu}/>
+					<Text style={styles.style_text_bet}>{serverBet.x}</Text>
+					<Text style={styles.style_text_bet_user}>{betX}</Text>
+					<View style={{marginTop: scaleSize(16)}}>
+						<TouchableOpacity onPress={()=>minusCoin(2)}>
+							<Ionicons color={'#3498db'} name={'ios-hand-right'} size={42}/>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</View>
+			{showChat&&(
+				<PopupChat mess={messages}/>
+			)}
+			{isResultDicePopup&&(
+				<ResultDicePopup countTai={countTai} countXiu={countXiu} result={diceResult}/>
+			)}
 			</ImageBackground>
-			</Animated.View>
 		</Animated.View>
 	);
 };
@@ -280,7 +312,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 		flex: 1,
-		// backgroundColor:'rgba(0,0,0,0.4)',
 		flexDirection: 'row',
 	},
 	view_main: {
@@ -308,20 +339,21 @@ const styles = StyleSheet.create({
 		left: WINDOW_WIDTH / 2 - scaleSize(DIALOG_WIDTH) / 2,
 		width: scaleSize(DIALOG_WIDTH),
 		height: scaleHeight(DIALOG_HEIGHT),
-		borderWidth: 1,
+		// borderWidth: 1,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center'
 	},
 	style_view_dialog_dice_header: {
-		flexDirection: 'row',
-		justifyContent: 'space-between'
+		// flexDirection: 'row',
+		// justifyContent: 'space-between',
+		// borderWidth: 1
 	},
 	style_main_dialog_dice: {
 		flexDirection: 'row',
 		flex: 1,
 		justifyContent: 'space-evenly',
-		paddingHorizontal: scaleSize(40)
+		paddingHorizontal: scaleSize(40),
+		// alignItems: 'center',
+		alignSelf: 'center'
 	},
 	style_text_dice: {
 		fontFamily: 'Montserrat_900Black',
@@ -378,6 +410,14 @@ const styles = StyleSheet.create({
 		color: 'white',
 		marginTop: scaleSize(32)
 	},
+	style_image_bg: {
+		width: scaleSize(DIALOG_WIDTH),
+		height: scaleHeight(DIALOG_HEIGHT),
+		// flexDirection: 'row',
+		// justifyContent: 'center',
+		// alignItems: 'center'
+		resizeMode: 'center'
+	},
 	style_circle_result: {
 		position: 'absolute',
 		right: 0,
@@ -396,6 +436,14 @@ const styles = StyleSheet.create({
 		shadowRadius: 16.00,
 
 		elevation: 24,
+	},
+	style_btn_img: {
+		width: scaleSize(70)
+	},
+	style_chat_btn: {
+		width: scaleSize(70),
+		height: scaleHeight(60),
+		resizeMode: 'contain',
 	}
 })
 

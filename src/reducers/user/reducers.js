@@ -11,6 +11,8 @@ export default function userReducer(state = initState, action) {
     switch (action.type) {
         case defines.CREATE_ACTION:
             return { ...state, user: action.data }
+        case defines.UPDATE_ACTION:
+            return {...state, user: action.data}
         case defines.MINUS_COIN_ACTION:
             return { ...state, user: action.data }
         case defines.PLUS_COIN_ACTION:

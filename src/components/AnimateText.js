@@ -1,26 +1,25 @@
 import React, {useEffect, useRef} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Animated, {useSharedValue, useAnimatedStyle, withRepeat, withTiming, useCode} from "react-native-reanimated";
 import {scaleSize} from "../utils/scale";
 
 const AnimateText = ({source, win}) => {
 
 	const opacityValue = useSharedValue(1)
-	const isFirst = useRef(0);
 
 	useCode(()=>{
-		if(isFirst.current !== 0) {
-			console.log('aaaaaaaaaaaaaaaaa')
-			opacityValue.value = withRepeat(
-				withTiming(0.3, {duration: 200}, (finished, currentValue) => {
 
-				}),
-				60,
-				true,
-				(finished) => {}
-			);
-		}
-		isFirst.current = 1
+	},[win]);
+
+	useEffect(()=>{
+		opacityValue.value = withRepeat(
+			withTiming(0.3, {duration: 200}, (finished, currentValue) => {
+
+			}),
+			60,
+			true,
+			(finished) => {}
+		);
 	},[win])
 
 	const animateStyle = useAnimatedStyle(()=>{

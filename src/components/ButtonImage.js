@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native'
 import {scaleSize} from "../utils/scale";
-const ButtonImageComponent = ({source, onPress=()=>{}}) => {
+const ButtonImageComponent = ({source, onPress=()=>{}, style}) => {
 	return (
 		<View>
 			<TouchableOpacity onPress={onPress}>
-				<Image style={styles.style_image} source={source}/>
+				<Image style={[styles.style_image, style]} source={source}/>
 			</TouchableOpacity>
 		</View>
 	);
@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
 
 const ButtonImage = React.memo(
 	ButtonImageComponent,
-	(prevProps, nextProps) => prevProps.onPress === nextProps.onPress
 )
 
 export default ButtonImage;

@@ -31,6 +31,7 @@ import {
 	useFonts,
 } from '@expo-google-fonts/montserrat';
 import AppLoading from 'expo-app-loading';
+import {GestureHandlerRootView} from 'react-native-gesture-handler'
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
 		shouldShowAlert: true,
@@ -130,10 +131,10 @@ export default function App() {
 	return (
 		<Provider store={configureStore()}>
 			<PersistGate onBeforeLift={onBeforeLift} persistor={persist}>
-				<View style={styles.container}>
+				<GestureHandlerRootView style={styles.container}>
 					<RootNavigation/>
 					<FlashMessage position={'top'} />
-				</View>
+				</GestureHandlerRootView>
 			</PersistGate>
 		</Provider>
 	);

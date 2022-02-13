@@ -11,6 +11,7 @@ import {cleanLoginState, loginAction} from "../reducers/login/action";
 import { showMessage } from "react-native-flash-message";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {createAnonymous} from "../reducers/user/action";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DialogLogin = ({
 	show=false,
@@ -36,8 +37,10 @@ const DialogLogin = ({
 				type: "info"
 			})
 			if(response.msg === 'Đăng nhập thành công.') {
-				onCloseDialog()
-				dispatch(createAnonymous(response.user))
+				AsyncStorage.setItem('key', response.accessToken).then(()=>{
+					dispatch(createAnonymous(response.user))
+					onCloseDialog()
+				})
 			}
 			// dispatch(cleanLoginState())
 		}

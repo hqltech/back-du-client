@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import Animated, {useSharedValue, withSpring, useAnimatedStyle, withTiming, withSequence} from "react-native-reanimated";
 import images from "../assets/images";
 import {scaleHeight, scaleSize} from "../utils/scale";
+import * as Animatable from 'react-native-animatable';
 
 const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
@@ -9,12 +10,12 @@ const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 
 	const rotateValue = useSharedValue(0);
 
-	useEffect(()=>{
+	useLayoutEffect(()=>{
 		setUri(change(number))
-		// rotateValue.value = withSequence(
-		// 	withTiming(rotateValue.value+90, {duration: 600}),
-		// 	withSpring(rotateValue.value+270)
-		// );
+	},[number])
+
+	useEffect(()=>{
+		animatedRef.current?.bounceIn()
 	},[number]);
 
 	function change (number) {
@@ -36,21 +37,15 @@ const DiceComponent = ({number = Math.floor(Math.random() * 6) + 1}) => {
 		}
 	}
 
-	const animateStyle = useAnimatedStyle(()=>{
-		return{
-			transform: [{
-				rotate: rotateValue.value + 'deg'
-			}]
-		}
-	})
+	const animatedRef = useRef()
 
 	return (
-		<Animated.Image style={[{
+		<Animatable.Image style={[{
 			width: scaleSize(100),
 			height: scaleHeight(100),
 			margin: scaleSize(16),
-			resizeMode: 'contain'
-		}]} source={uri}/>
+			resizeMode: 'contain',
+		}]} source={uri} ref={animatedRef} useNativeDriver easing={'ease-in-sine'} duration={3000}/>
 	);
 };
 

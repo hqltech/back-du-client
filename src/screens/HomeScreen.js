@@ -21,8 +21,11 @@ import Header from "../components/Header";
 import {showMessage} from "react-native-flash-message";
 import i18n from "i18n-js";
 import DiceGamePopup from "../popups/DiceGamePopup";
+import io from "socket.io-client/build/esm-debug";
+import {environmentConfig} from "../apis";
+import {updateUser} from "../reducers/user/action";
 
-
+const socket = io(environmentConfig.END_POINT_SOCKET, {transports: ['websocket']});
 const HomeScreen = ({navigation}) => {
 
 	const {user} = useSelector(state => ({
@@ -43,6 +46,12 @@ const HomeScreen = ({navigation}) => {
 			path: images.banner_home_3
 		},
 	]
+
+	useEffect(()=>{
+		socket.on('user_changed', (data)=>{
+			dispatch(updateUser(data))
+		})
+	},[])
 
 	const dispatch = useDispatch();
 
